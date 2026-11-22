@@ -8,6 +8,8 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.Typeface
+import android.text.TextPaint
+import android.text.TextUtils
 import androidx.core.content.res.ResourcesCompat
 import com.hayatow.nothinggrass.R
 import com.hayatow.nothinggrass.data.ContributionCalendar
@@ -54,17 +56,27 @@ class GrassRenderer(context: Context) {
         val pad = 16f * density
         if (layout.showHeader) {
             val baseline = pad + 16f * density
+            val left = pad + 2 * density
+            val right = w - pad - 2 * density
+            val gap = 8f * density
+            paint.typeface = mono
+            paint.textSize = 12f * density
+            val total = calendar?.let { NumberFormat.getIntegerInstance().format(it.total) } ?: "--"
+            val streak = calendar?.currentStreak ?: 0
+            val stats = listOf("$total contrib · ${streak}d", "$total · ${streak}d", total)
+                .firstOrNull { paint.measureText(it) <= (right - left) * 0.6f }
+            val statsWidth = stats?.let { paint.measureText(it) + gap } ?: 0f
+            if (stats != null) {
+                paint.color = palette.subText
+                paint.textAlign = Paint.Align.RIGHT
+                canvas.drawText(stats, right, baseline, paint)
+            }
             paint.typeface = sans
             paint.textSize = 14f * density
             paint.color = palette.text
-            canvas.drawText(login.ifBlank { "GitHub" }, pad + 2 * density, baseline, paint)
-            paint.typeface = mono
-            paint.textAlign = Paint.Align.RIGHT
-            val total = calendar?.let { NumberFormat.getIntegerInstance().format(it.total) } ?: "--"
-            val streak = calendar?.currentStreak ?: 0
-            paint.textSize = 12f * density
-            paint.color = palette.subText
-            canvas.drawText("$total contrib · ${streak}d", w - pad - 2 * density, baseline, paint)
+            paint.textAlign = Paint.Align.LEFT
+            val name = TextUtils.ellipsize(login.ifBlank { "GitHub" }, TextPaint(paint), right - left - statsWidth, TextUtils.TruncateAt.END)
+            canvas.drawText(name.toString(), left, baseline, paint)
             paint.textAlign = Paint.Align.LEFT
         }
 

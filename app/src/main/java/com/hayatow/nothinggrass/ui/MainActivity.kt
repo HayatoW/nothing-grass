@@ -88,7 +88,7 @@ fun SettingsScreen() {
             with(density) {
                 GrassRenderer(context).render(
                     340.dp.roundToPx(), 160.dp.roundToPx(), s?.login.orEmpty(), s?.calendar,
-                    GrassPalette.of(mode, dark = true, accent = if (mode == ColorMode.WALLPAPER) 0xFFFFB4AB.toInt() else null),
+                    GrassPalette.of(mode, dark = true, accent = if (mode == ColorMode.WALLPAPER) GrassPalette.wallpaperAccent(context, dark = true) else null),
                 ).asImageBitmap()
             }
         }

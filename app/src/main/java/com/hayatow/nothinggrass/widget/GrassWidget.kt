@@ -1,6 +1,9 @@
 package com.hayatow.nothinggrass.widget
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.glance.GlanceId
@@ -67,6 +70,15 @@ class RefreshAction : ActionCallback {
 
 class GrassWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = GrassWidget()
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
+            val manager = AppWidgetManager.getInstance(context)
+            onUpdate(context, manager, manager.getAppWidgetIds(ComponentName(context, javaClass)))
+            return
+        }
+        super.onReceive(context, intent)
+    }
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)

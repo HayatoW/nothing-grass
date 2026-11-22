@@ -46,10 +46,11 @@ data class GrassPalette(
         fun forContext(context: Context, mode: ColorMode): GrassPalette {
             val dark = (context.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
                 android.content.res.Configuration.UI_MODE_NIGHT_YES
-            val accent = if (mode == ColorMode.WALLPAPER && Build.VERSION.SDK_INT >= 31) {
-                context.getColor(if (dark) android.R.color.system_accent1_200 else android.R.color.system_accent1_600)
-            } else null
-            return of(mode, dark, accent)
+            return of(mode, dark, if (mode == ColorMode.WALLPAPER) wallpaperAccent(context, dark) else null)
         }
+
+        fun wallpaperAccent(context: Context, dark: Boolean): Int? = if (Build.VERSION.SDK_INT >= 31) {
+            context.getColor(if (dark) android.R.color.system_accent1_200 else android.R.color.system_accent1_600)
+        } else null
     }
 }
