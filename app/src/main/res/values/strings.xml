@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Nothing Grass</string>
+    <string name="widget_name">GitHub の草</string>
+    <string name="widget_description">GitHub のコントリビューションを Nothing OS 5 風の半透明カードで表示</string>
+</resources>
