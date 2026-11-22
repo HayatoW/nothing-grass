@@ -24,7 +24,7 @@ class RefreshWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         val state = store.current()
         if (state.login.isBlank()) return Result.success()
         val result = withContext(Dispatchers.IO) { runCatching { GitHubClient.fetch(state.login, state.token) } }
-        store.saveResult(result)
+        store.saveResult(state.login, result)
         GrassWidget().updateAll(applicationContext)
         return Result.success()
     }

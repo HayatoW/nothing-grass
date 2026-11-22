@@ -55,8 +55,10 @@ class SettingsStore(private val context: Context) {
         }
     }
 
-    suspend fun saveResult(result: Result<ContributionCalendar>) {
+    /** Ignored when the user switched login while [login] was being fetched. */
+    suspend fun saveResult(login: String, result: Result<ContributionCalendar>) {
         context.dataStore.edit { p ->
+            if (p[Keys.login] != login) return@edit
             result.onSuccess {
                 p[Keys.cache] = CalendarCodec.encode(it)
                 p[Keys.updatedAt] = System.currentTimeMillis()
